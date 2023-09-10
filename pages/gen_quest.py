@@ -35,11 +35,6 @@ def generate_text(state):
             + """\n- Apresenta-se a resposta correta, e explique a resposta."""
         )
 
-    base_prompt = (
-        base_prompt
-        + f"""\nEmenta: {state.objetivo}\nA questáo deve ser do tipo: {state.tipo}"""
-    )
-
     state.prompt = base_prompt
     # openai configured and check if text is flagged
     openai = oai.Openai()
