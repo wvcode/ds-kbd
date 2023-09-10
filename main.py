@@ -19,4 +19,4 @@ pages = {
 # Main
 # ----------------------------------------------------------------
 if __name__ == "__main__":
-    Gui(pages=pages).run(port=os.getenv("WEB_PORT"), use_reloader=True)
+    Gui(pages=pages).run(port=os.getenv("PORT"), use_reloader=True)
