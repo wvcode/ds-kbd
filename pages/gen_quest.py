@@ -64,6 +64,7 @@ def send_database(state, id, action):
             }
         ).execute()
         notify(state, "sucesso", "Questão salva!")
+        state.salvar = False
     except:
         notify(state, "error", "Erro ao salvar a questão")
 
@@ -76,6 +77,7 @@ def send_question(state, id, action):
 
     state.resultado = generate_text(state)
     notify(state, "success", "Questão criada!")
+    state.salvar = True
 
 
 # Definição de Variável
@@ -86,6 +88,7 @@ tem_resposta = "Sim"
 tem_introducao = "Sim"
 lkp_tipos = eval(os.getenv("QST_TIPOS"))
 lkp_niveis = eval(os.getenv("QST_NIVEIS"))
+salvar = False
 
 prompt = ""
 resultado = ""
@@ -94,7 +97,7 @@ resultado = ""
 gen_q_md = Markdown(
     """<|container|
     
-# Gerador de Questões - Data Science
+# Gerar de Questões
 
 <|layout|columns=1fr 250px|gap=5px|class_name=card|
 <|c1|
@@ -118,7 +121,7 @@ Inclui Resposta?<br/><|{tem_resposta}|toggle|lov=Sim;Não|>
 |>
 ---
 <br/>
-<center><|Gerar Questão|button|on_action=send_question|> <|Salvar Questão|button|on_action=send_database|></center>
+<center><|Gerar Questão|button|on_action=send_question|> <|Salvar Questão|button|on_action=send_database|active={salvar}|></center>
 <br/>
 <br/>
 <|{prompt}|input|multiline|label=Prompt|class_name=fullwidth|>

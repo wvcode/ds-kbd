@@ -19,4 +19,9 @@ pages = {
 # Main
 # ----------------------------------------------------------------
 if __name__ == "__main__":
-    Gui(pages=pages).run(host="0.0.0.0", port=os.getenv("PORT"), use_reloader=True)
+    Gui(pages=pages).run(
+        title="WVCode - Gerador de Questões de Ciência de Dados",
+        host="0.0.0.0",
+        port=os.getenv("PORT"),
+        use_reloader=True,
+    )
