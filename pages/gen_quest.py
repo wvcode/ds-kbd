@@ -12,6 +12,7 @@ def generate_text(state):
   Elabore uma questão de nível {state.nivel} sobre a ementa descrita abaixo:
   Ementa: {state.objetivo}
   A questáo deve ser do tipo: {state.tipo}
+  A questão aborda a área: {state.area}
   A questão deve ser estruturada da seguinte forma:"""
 
     if state.tem_introducao == "Sim":
@@ -74,6 +75,7 @@ def send_database(state, id, action):
         tbl = supabase.table("questoes")
         tbl.insert(
             {
+                "area": state.area,
                 "tipo": state.tipo,
                 "nivel": state.nivel,
                 "prompt": state.prompt,
@@ -98,6 +100,7 @@ def send_question(state, id, action):
 
 
 # Definição de Variável
+area = "Gestão de Dados"
 nivel = "Fácil"
 tipo = "Escolha Simples"
 objetivo = "Lógica de Programação com Python: if, for, dicionários e listas"
@@ -105,6 +108,7 @@ tem_resposta = "Sim"
 tem_introducao = "Sim"
 lkp_tipos = eval(os.getenv("QST_TIPOS"))
 lkp_niveis = eval(os.getenv("QST_NIVEIS"))
+lkp_areas = eval(os.getenv("QST_AREAS"))
 salvar = False
 
 prompt = ""
@@ -124,6 +128,8 @@ gen_q_md = Markdown(
 **Parâmetros**
 |>
 <|c3|
+<|{area}|selector|lov={lkp_areas}|dropdown|label=Selecione a Área da Questão|class_name=fullwidth|>
+<br/>
 <|{objetivo}|input|label="Digite a ementa que a questão deve abordar:"|multiline=true|class_name=fullwidth|>
 |>
 <|c4|

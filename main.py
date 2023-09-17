@@ -7,11 +7,13 @@ load_dotenv()
 
 from pages.gen_quest import gen_q_md
 from pages.tbl_quest import tbl_q_md
+from pages.sum_quest import sum_q_md
 
 pages = {
     "/": "<center><|navbar|></center>",
     "Gerar": gen_q_md,
     "Visualizar": tbl_q_md,
+    "Sumario": sum_q_md,
 }
 
 
