@@ -17,7 +17,24 @@ def generate_text(state):
     if state.tem_introducao == "Sim":
         base_prompt = base_prompt + """\n- Apresenta-se uma introdução ao conteúdo"""
 
-    base_prompt = base_prompt + """\n- Apresenta-se o enunciado da questão"""
+    if state.tipo == "Código SQL":
+        base_prompt = (
+            base_prompt
+            + """\n- Apresenta-se o enunciado da questão seguindo o formato:
+            - Gera-se uma tabela de dados ficticios
+            - Mostra-se a tabela de dados
+            - Faz-se uma pergunta que o aluno deve responder com uma instrução SQL"""
+        )
+    elif state.tipo == "Código Python":
+        base_prompt = (
+            base_prompt
+            + """\n- Apresenta-se o enunciado da questão seguindo o formato:
+            - Gera-se uma tabela de dados ficticios
+            - Mostra-se a tabela de dados
+            - Faz-se uma pergunta que o aluno deve responder com um script Python que pode utilizar as bibliotecas pandas, matplotlib, requests e todas as biliotecas nativas do python"""
+        )
+    else:
+        base_prompt = base_prompt + """\n- Apresenta-se o enunciado da questão"""
 
     if state.tipo in ["Escolha Simples", "Escolha Múltipla"]:
         base_prompt = base_prompt + """\n- Apresentam-se 5 alternativas de resposta"""
