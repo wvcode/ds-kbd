@@ -40,6 +40,18 @@ def generate_text(state):
     if state.tipo in ["Escolha Simples", "Escolha Múltipla"]:
         base_prompt = base_prompt + """\n- Apresentam-se 5 alternativas de resposta"""
 
+    if state.tipo == "Escolha Simples":
+        base_prompt = (
+            base_prompt
+            + """\n  - Apenas uma resposta pode ser correta. Todas as outras devem ser incorretas."""
+        )
+
+    if state.tipo == "Escolha Múltipla":
+        base_prompt = (
+            base_prompt
+            + """\n  - No máximo 3 respostas podem ser corretas. Todas as outras devem ser incorretas."""
+        )
+
     if state.tipo in ["Completar as Lacunas"]:
         base_prompt = (
             base_prompt
@@ -51,6 +63,7 @@ def generate_text(state):
         base_prompt = (
             base_prompt
             + """\n- Apresenta-se a resposta correta, e explique a resposta."""
+            + """\n- Também deve ser entregue a justificativa de porque as outras opções são incorretas."""
         )
 
     state.prompt = base_prompt
