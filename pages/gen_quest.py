@@ -63,6 +63,11 @@ def generate_text(state):
         base_prompt = (
             base_prompt
             + """\n- Apresenta-se a resposta correta, e explique a resposta."""
+        )
+
+    if state.tipo in ["Escolha Simples", "Escolha Múltipla"]:
+        base_prompt = (
+            base_prompt
             + """\n- Também deve ser entregue a justificativa de porque as outras opções são incorretas."""
         )
 
