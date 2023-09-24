@@ -20,6 +20,84 @@ class Openai:
     """OpenAI Connector."""
 
     @staticmethod
+    def build_prompt(
+        nivel: str,
+        objetivo: str,
+        tipo: str,
+        area: str,
+        tem_introducao: str,
+        tem_resposta: str,
+    ):
+        base_prompt = f"""Você é um especialista em Ciência de Dados.
+        Elabore uma questão de nível {nivel} sobre a ementa descrita abaixo:
+        Ementa: {objetivo}
+        A questáo deve ser do tipo: {tipo}
+        A questão aborda a área: {area}
+        A questão deve ser estruturada da seguinte forma:"""
+
+        if tem_introducao == "Sim":
+            base_prompt = (
+                base_prompt + """\n- Apresenta-se uma introdução ao conteúdo"""
+            )
+
+        if tipo == "Código SQL":
+            base_prompt = (
+                base_prompt
+                + """\n- Apresenta-se o enunciado da questão seguindo o formato:
+            - Gera-se uma tabela de dados ficticios
+            - Mostra-se a tabela de dados
+            - Faz-se uma pergunta que o aluno deve responder com uma instrução SQL"""
+            )
+        elif tipo == "Código Python":
+            base_prompt = (
+                base_prompt
+                + """\n- Apresenta-se o enunciado da questão seguindo o formato:
+            - Gera-se uma tabela de dados ficticios
+            - Mostra-se a tabela de dados
+            - Faz-se uma pergunta que o aluno deve responder com um script Python que pode utilizar as bibliotecas pandas, matplotlib, requests e todas as biliotecas nativas do python"""
+            )
+        else:
+            base_prompt = base_prompt + """\n- Apresenta-se o enunciado da questão"""
+
+        if tipo in ["Escolha Simples", "Escolha Múltipla"]:
+            base_prompt = (
+                base_prompt + """\n- Apresentam-se 5 alternativas de resposta"""
+            )
+
+        if tipo == "Escolha Simples":
+            base_prompt = (
+                base_prompt
+                + """\n  - Apenas uma resposta pode ser correta. Todas as outras devem ser incorretas."""
+            )
+
+        if tipo == "Escolha Múltipla":
+            base_prompt = (
+                base_prompt
+                + """\n  - No máximo 3 respostas podem ser corretas. Todas as outras devem ser incorretas."""
+            )
+
+        if tipo in ["Completar as Lacunas"]:
+            base_prompt = (
+                base_prompt
+                + """\n- Apresenta-se uma frase que deve conter até 3 lacunas representadas por ___
+        - Apresentam-se 5 alternativas de resposta, onde cada resposta contem os termos para completar as lacunas"""
+            )
+
+        if tem_resposta == "Sim":
+            base_prompt = (
+                base_prompt
+                + """\n- Apresenta-se a resposta correta, e explique a resposta."""
+            )
+
+        if tipo in ["Escolha Simples", "Escolha Múltipla"]:
+            base_prompt = (
+                base_prompt
+                + """\n- Também deve ser entregue a justificativa de porque as outras opções são incorretas."""
+            )
+
+        return base_prompt
+
+    @staticmethod
     def set_key(key: str):
         openai.api_key = key
 
@@ -33,7 +111,6 @@ class Openai:
         try:
             response = openai.Moderation.create(prompt)
             return response["results"][0]["flagged"]
-
         except Exception as e:
             logging.error(f"OpenAI API error: {e}")
 

@@ -6,85 +6,6 @@ from supabase import create_client, Client
 import pages.oai as oai
 
 
-# Define functions
-def generate_text(state):
-    base_prompt = f"""Você é um especialista em Ciência de Dados.
-  Elabore uma questão de nível {state.nivel} sobre a ementa descrita abaixo:
-  Ementa: {state.objetivo}
-  A questáo deve ser do tipo: {state.tipo}
-  A questão aborda a área: {state.area}
-  A questão deve ser estruturada da seguinte forma:"""
-
-    if state.tem_introducao == "Sim":
-        base_prompt = base_prompt + """\n- Apresenta-se uma introdução ao conteúdo"""
-
-    if state.tipo == "Código SQL":
-        base_prompt = (
-            base_prompt
-            + """\n- Apresenta-se o enunciado da questão seguindo o formato:
-            - Gera-se uma tabela de dados ficticios
-            - Mostra-se a tabela de dados
-            - Faz-se uma pergunta que o aluno deve responder com uma instrução SQL"""
-        )
-    elif state.tipo == "Código Python":
-        base_prompt = (
-            base_prompt
-            + """\n- Apresenta-se o enunciado da questão seguindo o formato:
-            - Gera-se uma tabela de dados ficticios
-            - Mostra-se a tabela de dados
-            - Faz-se uma pergunta que o aluno deve responder com um script Python que pode utilizar as bibliotecas pandas, matplotlib, requests e todas as biliotecas nativas do python"""
-        )
-    else:
-        base_prompt = base_prompt + """\n- Apresenta-se o enunciado da questão"""
-
-    if state.tipo in ["Escolha Simples", "Escolha Múltipla"]:
-        base_prompt = base_prompt + """\n- Apresentam-se 5 alternativas de resposta"""
-
-    if state.tipo == "Escolha Simples":
-        base_prompt = (
-            base_prompt
-            + """\n  - Apenas uma resposta pode ser correta. Todas as outras devem ser incorretas."""
-        )
-
-    if state.tipo == "Escolha Múltipla":
-        base_prompt = (
-            base_prompt
-            + """\n  - No máximo 3 respostas podem ser corretas. Todas as outras devem ser incorretas."""
-        )
-
-    if state.tipo in ["Completar as Lacunas"]:
-        base_prompt = (
-            base_prompt
-            + """\n- Apresenta-se uma frase que deve conter até 3 lacunas representadas por ___
-        - Apresentam-se 5 alternativas de resposta com os termos para completar as lacunas"""
-        )
-
-    if state.tem_resposta == "Sim":
-        base_prompt = (
-            base_prompt
-            + """\n- Apresenta-se a resposta correta, e explique a resposta."""
-        )
-
-    if state.tipo in ["Escolha Simples", "Escolha Múltipla"]:
-        base_prompt = (
-            base_prompt
-            + """\n- Também deve ser entregue a justificativa de porque as outras opções são incorretas."""
-        )
-
-    state.prompt = base_prompt
-    # openai configured and check if text is flagged
-    openai = oai.Openai()
-    openai.set_key(os.getenv("OAI_API_KEY"))
-    flagged = openai.moderate(base_prompt)
-
-    if flagged:
-        notify(state, "error", "Problema no prompt")
-        return None
-    else:
-        resultado = openai.complete(base_prompt).strip().replace('"', "")
-        return resultado
-
-
 def send_database(state, id, action):
     try:
         url: str = os.environ.get("SUPABASE_URL")
@@ -108,11 +29,29 @@ def send_database(state, id, action):
 
 def send_question(state, id, action):
     state.resultado = "Waiting ..."
+    resultado = None
     if state.objetivo == "":
         notify(state, "error", "Defina a ementa da questão!")
         return None
 
-    state.resultado = generate_text(state)
+    openai = oai.Openai()
+    state.prompt = openai.build_prompt(
+        state.nivel,
+        state.objetivo,
+        state.tipo,
+        state.area,
+        state.tem_introducao,
+        state.tem_resposta,
+    )
+    openai.set_key(os.getenv("OAI_API_KEY"))
+    flagged = openai.moderate(state.prompt)
+
+    if flagged:
+        notify(state, "error", "Problema no prompt")
+    else:
+        resultado = openai.complete(state.prompt).strip().replace('"', "")
+
+    state.resultado = resultado
     notify(state, "success", "Questão criada!")
     state.salvar = True
 
