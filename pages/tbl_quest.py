@@ -30,6 +30,7 @@ download_active = False
 display_resultado = None
 display_index = None
 display_area = None
+display_label = None
 
 
 def refresh_dados(state):
@@ -59,6 +60,7 @@ def show_resultado(state, var_name, action, payload):
     state.display_index = payload["index"]
     state.display_resultado = state.dados["resultado"][payload["index"]]
     state.display_area = state.dados["area"][payload["index"]]
+    state.display_label = state.dados["label"][payload["index"]]
 
 
 def salvar_questao(state):
@@ -90,6 +92,7 @@ tbl_q_md = Markdown(
 <|{dados}|table|page_size=15|columns=label;nivel;tipo|class_name=fullwidth|editable=True|on_delete=delete_questao|on_action=show_resultado|>
 |>
 <|c3|
+<|{display_label}|text|><br/>
 <|{display_area}|text|><br/>
 <|{display_resultado}|input|label="Questão"|multiline=true|class_name=fullwidth|>
 <br/>
