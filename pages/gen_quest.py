@@ -49,7 +49,7 @@ def send_question(state, id, action):
     if flagged:
         notify(state, "error", "Problema no prompt")
     else:
-        resultado = openai.complete(state.prompt).strip().replace('"', "")
+        resultado = openai.complete(state.prompt)
 
     state.resultado = resultado
     notify(state, "success", "Questão criada!")
