@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
 from taipy.gui import notify, Markdown
-from supabase import create_client, Client
 import pandas as pd
-from pages.ppt import create_presentation
+from utils.ppt import create_presentation
+from supabase import create_client, Client
 
 
 def return_dados():
     tbl = None
     try:
+        supabase: Client = create_client(url, key)
         tbl = supabase.table("questoes").select("*").order("id").execute()
         df = pd.DataFrame(tbl.data)
         df["label"] = "Questão " + df["id"].astype(str)

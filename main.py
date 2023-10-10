@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import os
-from taipy.gui import Gui, notify
+
+from taipy.gui import Gui
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from pages.gen_quest import gen_q_md
-from pages.tbl_quest import tbl_q_md
-from pages.sum_quest import sum_q_md
+from pages.generate import gen_q_md
+from pages.visualize import tbl_q_md
+from pages.report import sum_q_md
 
 pages = {
     "/": "<center><|navbar|></center>",
@@ -22,7 +23,7 @@ pages = {
 # ----------------------------------------------------------------
 if __name__ == "__main__":
     Gui(pages=pages).run(
-        title="WVCode - Gerador de Questões de Ciência de Dados",
+        title="EduAssist.ai - Gerador de Questões",
         host="0.0.0.0",
         port=os.getenv("PORT"),
         use_reloader=True,

@@ -3,7 +3,8 @@ import os
 from taipy.gui import Gui, notify, Markdown
 from supabase import create_client, Client
 
-import pages.oai as oai
+import utils.oai as oai
+import utils.config as config
 
 
 def send_database(state, id, action):
@@ -63,9 +64,9 @@ tipo = "Escolha Simples"
 objetivo = "Lógica de Programação com Python: if, for, dicionários e listas"
 tem_resposta = "Sim"
 tem_introducao = "Sim"
-lkp_tipos = eval(os.getenv("QST_TIPOS"))
-lkp_niveis = eval(os.getenv("QST_NIVEIS"))
-lkp_areas = eval(os.getenv("QST_AREAS"))
+lkp_tipos = config.QST_TIPOS
+lkp_niveis = config.QST_NIVEIS
+lkp_areas = config.QST_AREAS
 salvar = False
 
 prompt = ""
